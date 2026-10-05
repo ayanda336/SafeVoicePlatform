@@ -1,0 +1,166 @@
+﻿@model SafeVoicePlatform.Models.Referral
+
+
+@{
+    ViewData["Title"] = "Referral Details";
+    var currentStatus = Model.Status;
+    var contactMade = Model.ContactMade;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">Referral Details</h3>
+                        <small>Referral #@Model.Id</small>
+                    </div>
+                    <span class="badge fs-6 px-3 py-2
+                        @(currentStatus == "Completed" ? "bg-success" :
+                                                    currentStatus == "In Progress" ? "bg-info" : "bg-warning")">
+                        @Model.Status
+                    </span>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <h4>Report Information</h4>
+                    <dl class="row mb-4">
+                        <dt class="col-sm-3">Report Title</dt>
+                        <dd class="col-sm-9">@(Model.Report?.Title ?? "N/A")</dd>
+
+                        <dt class="col-sm-3">Report Type</dt>
+                        <dd class="col-sm-9">@(Model.Report?.ReportType ?? "N/A")</dd>
+
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">@(Model.Report?.Description ?? "N/A")</dd>
+
+                        @if (Model.Report != null && Model.Report.IsUrgent)
+                        {
+                            <dt class="col-sm-3">Urgency</dt>
+                            <dd class="col-sm-9"><span class="badge bg-danger">Urgent</span></dd>
+                        }
+
+                        <dt class="col-sm-3">Submitted By</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Report != null && Model.Report.IsAnonymous)
+                            {
+                                <span class="badge bg-info">Anonymous Report</span>
+                            }
+                            else
+                            {
+                                <span>@(Model.Report?.User?.FullName ?? "Unknown") (@(Model.Report?.User?.Email ?? "No email"))</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Submitted On</dt>
+                        <dd class="col-sm-9">@(Model.Report?.CreatedAt.ToString("MMM dd, yyyy HH:mm") ?? "N/A")</dd>
+                    </dl>
+
+                    <h4>Referral Information</h4>
+                    <dl class="row mb-4">
+                        <dt class="col-sm-3">Support Organization</dt>
+                        <dd class="col-sm-9">@(Model.SupportOrganization?.Name ?? "N/A")</dd>
+
+                        <dt class="col-sm-3">Referred By</dt>
+                        <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.ReferredBy) ? "System" : Model.ReferredBy)</dd>
+
+                        <dt class="col-sm-3">Referred On</dt>
+                        <dd class="col-sm-9">@Model.ReferredAt.ToString("MMM dd, yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-3">Notes</dt>
+                        <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Notes) ? "No notes" : Model.Notes)</dd>
+
+                        @if (Model.ContactMade)
+                        {
+                            <dt class="col-sm-3">Contact Made</dt>
+                            <dd class="col-sm-9">
+                                <span class="badge bg-success">Yes</span>
+                                @if (Model.ContactDate.HasValue)
+                                {
+                                    <span> on @Model.ContactDate.Value.ToString("MMM dd, yyyy")</span>
+                                }
+                            </dd>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Outcome))
+                        {
+                            <dt class="col-sm-3">Outcome</dt>
+                            <dd class="col-sm-9">@Model.Outcome</dd>
+                        }
+                    </dl>
+
+                    <h4>Update Status</h4>
+                    <form asp-action="UpdateReferralStatus" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Status</label>
+                                <select name="status" class="form-select" required>
+                                    @if (currentStatus == "Pending")
+                                    {
+                                        <option value="Pending" selected>Pending</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    }
+                                    else if (currentStatus == "In Progress")
+                                    {
+                                        <option value="Pending">Pending</option>
+                                        <option value="In Progress" selected>In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Pending">Pending</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed" selected>Completed</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Notes</label>
+                                <input type="text" name="notes" class="form-control" value="@Model.Notes" placeholder="Update notes" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Contact Made</label>
+                                <select name="contactMade" class="form-select">
+                                    @if (contactMade)
+                                    {
+                                        <option value="false">No</option>
+                                        <option value="true" selected>Yes</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="false" selected>No</option>
+                                        <option value="true">Yes</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Contact Date</label>
+                                <input type="date" name="contactDate" class="form-control" value="@(Model.ContactDate?.ToString("yyyy-MM-dd"))" />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Outcome</label>
+                                <textarea name="outcome" class="form-control" rows="2" placeholder="Describe the outcome of this referral">@Model.Outcome</textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Update Referral
+                                </button>
+                                <a asp-action="Referrals" class="btn btn-secondary">Back to List</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

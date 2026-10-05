@@ -1,0 +1,224 @@
+﻿@model SafeVoicePlatform.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Admin Dashboard</h1>
+        <div>
+            <a asp-action="Users" class="btn btn-outline-primary me-2">
+                <i class="bi bi-people"></i> Manage Users
+            </a>
+            <a asp-action="Institutions" class="btn btn-outline-info me-2">
+                <i class="bi bi-building"></i> Institutions
+            </a>
+            <a asp-action="SupportOrganizations" class="btn btn-outline-success">
+                <i class="bi bi-heart"></i> Support Organizations
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Total Users</h6>
+                            <h2 class="mb-0">@Model.TotalUsers</h2>
+                        </div>
+                        <i class="bi bi-people fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Total Reports</h6>
+                            <h2 class="mb-0">@Model.TotalReports</h2>
+                        </div>
+                        <i class="bi bi-file-text fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Institutions</h6>
+                            <h2 class="mb-0">@Model.TotalInstitutions</h2>
+                        </div>
+                        <i class="bi bi-building fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Support Orgs</h6>
+                            <h2 class="mb-0">@Model.TotalSupportOrganizations</h2>
+                        </div>
+                        <i class="bi bi-heart fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Reports by Type -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Reports by Type</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="reportsByTypeChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports by Status -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Reports by Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="reportsByStatusChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Reports -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var report in Model.RecentReports)
+                                {
+                                    <tr>
+                                        <td>#@report.Id</td>
+                                        <td>@report.ReportType</td>
+                                        <td>
+                                            <span class="badge @(report.Status == "Resolved" ? "bg-success" : report.Status == "Under Review" ? "bg-warning" : "bg-secondary")">
+                                                @report.Status
+                                            </span>
+                                        </td>
+                                        <td>@report.CreatedAt.ToString("MMM dd")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Users</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.RecentUsers)
+                                {
+                                    <tr>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Email</td>
+                                        <td>@user.CreatedAt.ToString("MMM dd")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var typeLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ReportsByType.Select(t => t.Status)));
+        var typeData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ReportsByType.Select(t => t.Count)));
+
+        var statusLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ReportsByStatus.Select(s => s.Status)));
+        var statusData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ReportsByStatus.Select(s => s.Count)));
+
+        // Reports by Type Chart
+        var typeCtx = document.getElementById('reportsByTypeChart').getContext('2d');
+        new Chart(typeCtx, {
+            type: 'bar',
+            data: {
+                labels: typeLabels,
+                datasets: [{
+                    label: 'Number of Reports',
+                    data: typeData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        // Reports by Status Chart
+        var statusCtx = document.getElementById('reportsByStatusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'pie',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusData,
+                    backgroundColor: ['#6c757d', '#ffc107', '#28a745']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    </script>
+}

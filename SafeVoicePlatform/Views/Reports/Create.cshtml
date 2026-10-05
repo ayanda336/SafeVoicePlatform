@@ -1,0 +1,195 @@
+﻿@model SafeVoicePlatform.Models.Report
+
+@{
+    ViewData["Title"] = "Submit a Report";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Submit a Report</h2>
+                    <p class="mb-0 mt-2">Your voice matters. Report safely and securely.</p>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <!-- Report Type -->
+                        <div class="mb-3">
+                            <label asp-for="ReportType" class="form-label fw-bold"></label>
+                            <select asp-for="ReportType" class="form-select" asp-items="ViewBag.ReportTypes">
+                                <option value="">-- Select Report Type --</option>
+                            </select>
+                            <span asp-validation-for="ReportType" class="text-danger"></span>
+                        </div>
+
+                        <!-- Institution Selection (for Individual users) -->
+                        @if (ViewBag.ShowInstitutionSelector == true)
+                        {
+                            <div class="mb-3">
+                                <label asp-for="InstitutionId" class="form-label fw-bold">Select Your Institution</label>
+                                <select asp-for="InstitutionId" class="form-select">
+                                    <option value="">-- Select your institution --</option>
+                                    @if (ViewBag.Institutions != null)
+                                    {
+                                        foreach (var inst in ViewBag.Institutions)
+                                        {
+                                            <option value="@inst.Value">@inst.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <small class="form-text text-muted">Select the institution where this incident occurred or your affiliated institution.</small>
+                                <span asp-validation-for="InstitutionId" class="text-danger"></span>
+                            </div>
+                        }
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Brief title of the incident" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="6" placeholder="Please provide details about what happened, including dates, times, and any relevant information..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <small class="form-text text-muted">Be as specific as possible. Your information helps us respond effectively.</small>
+                        </div>
+
+                        <div class="row">
+                            <!-- Incident Date -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IncidentDate" class="form-label fw-bold"></label>
+                                <input asp-for="IncidentDate" type="date" class="form-control" id="incidentDate" />
+                                <span asp-validation-for="IncidentDate" class="text-danger"></span>
+                                <small class="form-text text-muted">Please enter the date when the incident occurred. Future dates are not allowed.</small>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Location" class="form-label fw-bold"></label>
+                                <input asp-for="Location" class="form-control" placeholder="Where did this happen?" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Urgent Flag -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsUrgent" class="form-check-input" type="checkbox" id="isUrgent" />
+                                <label asp-for="IsUrgent" class="form-check-label fw-bold text-danger">
+                                    This is urgent - requires immediate attention
+                                </label>
+                            </div>
+                            <small class="form-text text-muted">Check this if you are in immediate danger or need urgent assistance.</small>
+                        </div>
+
+                        <!-- Anonymous Reporting -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsAnonymous" class="form-check-input" type="checkbox" id="isAnonymous" />
+                                <label asp-for="IsAnonymous" class="form-check-label fw-bold">
+                                    Report Anonymously
+                                </label>
+                            </div>
+                            <small class="form-text text-muted">Your identity will not be shared with anyone. You will receive a reference number to track your report.</small>
+                        </div>
+
+                        <!-- Witness Information -->
+                        <div class="mb-3" id="witnessInfoDiv">
+                            <label asp-for="WitnessInfo" class="form-label fw-bold"></label>
+                            <textarea asp-for="WitnessInfo" class="form-control" rows="3" placeholder="Names and contact information of any witnesses (if known)"></textarea>
+                            <span asp-validation-for="WitnessInfo" class="text-danger"></span>
+                            <small class="form-text text-muted">Only provide information you're comfortable sharing.</small>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Upload Evidence</label>
+                            <input type="file" name="attachments" class="form-control" multiple accept="image/*,.pdf,.doc,.docx" />
+                            <small class="form-text text-muted">You can upload images, documents, or other evidence. Maximum file size: 10MB per file.</small>
+                        </div>
+
+                        <!-- Privacy Notice -->
+                        <div class="alert alert-info mt-3">
+                            <strong>Privacy Notice:</strong> Your report will be handled with confidentiality.
+                            Information will only be shared with authorized personnel and support services as needed.
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send"></i> Submit Report
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Set max date to today (prevent future dates)
+        document.addEventListener('DOMContentLoaded', function() {
+            var dateInput = document.getElementById('incidentDate');
+            if (dateInput) {
+                var today = new Date().toISOString().split('T')[0];
+                dateInput.setAttribute('max', today);
+            }
+        });
+
+        // Toggle witness info visibility based on anonymous flag
+        var anonymousCheckbox = document.getElementById('isAnonymous');
+        var witnessInfoDiv = document.getElementById('witnessInfoDiv');
+
+        if (anonymousCheckbox) {
+            anonymousCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    witnessInfoDiv.style.display = 'none';
+                    document.getElementById('WitnessInfo').value = '';
+                } else {
+                    witnessInfoDiv.style.display = 'block';
+                }
+            });
+        }
+
+        // Validate file size
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Validate date
+                var dateInput = document.getElementById('incidentDate');
+                if (dateInput && dateInput.value) {
+                    var selectedDate = new Date(dateInput.value);
+                    var today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    if (selectedDate > today) {
+                        alert('Incident date cannot be in the future. Please select a valid date.');
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                // Validate file size
+                var files = document.querySelector('input[type="file"]').files;
+                var maxSize = 10 * 1024 * 1024; // 10MB
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].size > maxSize) {
+                        alert('File ' + files[i].name + ' exceeds 10MB limit');
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            });
+        }
+    </script>
+}

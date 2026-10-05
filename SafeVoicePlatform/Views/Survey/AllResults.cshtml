@@ -1,0 +1,83 @@
+﻿@model List<SafeVoicePlatform.Controllers.SurveyStatsViewModel>
+
+@{
+    ViewData["Title"] = "All Survey Results";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>All Survey Results</h1>
+       
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+            <h4>No Surveys Found</h4>
+            <p>There are no surveys in the system yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Survey Title</th>
+                                <th>Status</th>
+                                <th>Total Responses</th>
+                                <th>Identified</th>
+                                <th>Anonymous</th>
+                                <th>Period</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var survey in Model)
+                            {
+                                <tr>
+                                    <td>#@survey.SurveyId</td>
+                                    <td>@survey.Title</td>
+                                    <td>
+                                        @if (survey.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">@survey.TotalResponses</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-success">@survey.IdentifiedResponses</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-info">@survey.AnonymousResponses</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            @(survey.StartDate?.ToString("MMM dd") ?? "Start") -
+                                            @(survey.EndDate?.ToString("MMM dd, yyyy") ?? "Ongoing")
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <a asp-action="Results" asp-route-id="@survey.SurveyId" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-graph-up"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

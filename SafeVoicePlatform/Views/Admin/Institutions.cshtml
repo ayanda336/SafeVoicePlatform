@@ -1,0 +1,72 @@
+﻿@model List<SafeVoicePlatform.Models.Institution>
+
+@{
+    ViewData["Title"] = "Manage Institutions";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Institutions</h1>
+        <div>
+            <a asp-action="CreateInstitution" class="btn btn-success me-2">
+                <i class="bi bi-plus-circle"></i> Add Institution
+            </a>
+            <a asp-action="Dashboard" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var institution in Model)
+                        {
+                            <tr>
+                                <td>@institution.Id</td>
+                                <td>@institution.Name</td>
+                                <td>@institution.Type</td>
+                                <td>
+                                    @if (institution.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactive</span>
+                                    }
+                                </td>
+                                <td>@institution.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <a asp-action="EditInstitution" asp-route-id="@institution.Id" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

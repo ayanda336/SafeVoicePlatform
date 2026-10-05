@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Report Submitted";
+    var reportId = ViewBag.ReportId;
+    var referenceNumber = ViewBag.ReferenceNumber;
+    var qrCodeImage = ViewBag.QRCodeImage;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow text-center">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    <h1 class="display-5 text-success">Report Submitted Successfully!</h1>
+
+                    @if (!string.IsNullOrEmpty(referenceNumber))
+                    {
+                        <div class="alert alert-info mt-4">
+                            <h4>Your Reference Number:</h4>
+                            <h2 class="fw-bold">@referenceNumber</h2>
+                            <hr />
+
+                            <!-- QR Code Section -->
+                            @if (!string.IsNullOrEmpty(qrCodeImage))
+                            {
+                                <div class="mt-3">
+                                    <p><strong>Scan to Track Your Report:</strong></p>
+                                    <img src="data:image/png;base64,@qrCodeImage" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 10px;" />
+                                    <p class="text-muted mt-2">Scan with your phone camera to track your report status</p>
+                                </div>
+                            }
+
+                            <!-- Download Buttons -->
+                            <div class="mt-3">
+                                <div class="btn-group" role="group">
+                                    <a href="@Url.Action("DownloadQRCode", "Reports", new { referenceNumber = referenceNumber })"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-download"></i> Download QR Code
+                                    </a>
+                                    <a href="@Url.Action("DownloadReportCard", "Reports", new { referenceNumber = referenceNumber })"
+                                       class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-file-text"></i> Download Report Card
+                                    </a>
+                                    <button onclick="copyReferenceNumber()" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-copy"></i> Copy Number
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p class="mb-0 mt-3">
+                                <strong>Please save this number!</strong> You can use it to track your report anonymously.
+                            </p>
+                        </div>
+                    }
+
+                    <p class="lead mt-3">
+                        Thank you for speaking up. Your report has been received and will be reviewed.
+                    </p>
+
+                    <div class="mt-4">
+                        @if (!string.IsNullOrEmpty(referenceNumber))
+                        {
+                            <a asp-action="Track" asp-controller="Reports" class="btn btn-primary me-2">
+                                <i class="bi bi-search"></i> Track Report
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="MyReports" asp-controller="Reports" class="btn btn-primary me-2">
+                                <i class="bi bi-list-ul"></i> View My Reports
+                            </a>
+                        }
+                        <a asp-action="Create" asp-controller="Reports" class="btn btn-outline-primary">
+                            <i class="bi bi-plus-circle"></i> Submit Another Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyReferenceNumber() {
+        var referenceNumber = '@referenceNumber';
+        navigator.clipboard.writeText(referenceNumber).then(function() {
+            alert('Reference number copied to clipboard: ' + referenceNumber);
+        }, function() {
+            alert('Failed to copy reference number');
+        });
+    }
+</script>
+
+<style>
+    .btn-group {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+        .btn-group .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+</style>

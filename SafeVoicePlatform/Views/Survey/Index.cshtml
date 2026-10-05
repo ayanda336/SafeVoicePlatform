@@ -1,0 +1,93 @@
+﻿@model List<SafeVoicePlatform.Models.Survey>
+
+@{
+    ViewData["Title"] = "Wellbeing Surveys";
+    var completedSurveys = ViewBag.CompletedSurveys as List<int> ?? new List<int>();
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h1>Wellbeing Surveys</h1>
+        <p class="lead">Your voice matters. Help us understand and improve safety and wellbeing.</p>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> These surveys are available for Individual users only.
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+            <h4>No Active Surveys</h4>
+            <p>There are no active surveys at the moment. Please check back later.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var survey in Model)
+            {
+                var isCompleted = completedSurveys.Contains(survey.Id);
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow @(isCompleted ? "border-success" : "")">
+                        <div class="card-header @(isCompleted ? "bg-success text-white" : "bg-primary text-white")">
+                            <h5 class="mb-0">@survey.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@survey.Description</p>
+                            <div class="text-muted small">
+                                @if (survey.StartDate.HasValue)
+                                {
+                                    <span>📅 Starts: @survey.StartDate.Value.ToString("MMM dd, yyyy")</span>
+                                }
+                                @if (survey.EndDate.HasValue)
+                                {
+                                    <br />
+                                    <span>⏰ Ends: @survey.EndDate.Value.ToString("MMM dd, yyyy")</span>
+                                }
+                            </div>
+                            @if (isCompleted)
+                            {
+                                <div class="mt-3">
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Completed
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            @if (isCompleted)
+                            {
+                                <button class="btn btn-secondary" disabled>
+                                    <i class="bi bi-check-circle"></i> Already Completed
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-action="Take" asp-route-id="@survey.Id" class="btn btn-primary">
+                                    <i class="bi bi-pencil-square"></i> Take Survey
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

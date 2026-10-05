@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Create Referral";
+    var reportId = ViewBag.ReportId;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">Create Referral</h3>
+                </div>
+                <div class="card-body">
+                    <p>Refer Report #@reportId to a support organization</p>
+
+                    <form asp-action="CreateReferral" asp-route-reportId="@reportId" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Support Organization</label>
+                            <select name="supportOrgId" class="form-select" required>
+                                <option value="">-- Select an organization --</option>
+                                @if (ViewBag.SupportOrganizations != null)
+                                {
+                                    foreach (var org in ViewBag.SupportOrganizations)
+                                    {
+                                        <option value="@org.Value">@org.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Referral Notes</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="Add any notes for the support organization..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-share"></i> Create Referral
+                            </button>
+                            <a asp-action="Details" asp-route-id="@reportId" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+﻿@model SafeVoicePlatform.Models.EditUserViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Edit User</h3>
+                    <small>@Model.Email</small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditUser" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Email" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label fw-bold"></label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Department" class="form-label fw-bold"></label>
+                            <input asp-for="Department" class="form-control" />
+                            <span asp-validation-for="Department" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Roles</label>
+                            @for (int i = 0; i < Model.AllRoles.Count; i++)
+                            {
+                                <div class="form-check">
+                                    <input type="checkbox" name="SelectedRoles" value="@Model.AllRoles[i].Value"
+                                           class="form-check-input"
+                                           @(Model.SelectedRoles.Contains(Model.AllRoles[i].Value) ? "checked" : "") />
+                                    <label class="form-check-label">@Model.AllRoles[i].Text</label>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="InstitutionId" class="form-label fw-bold">Institution (for InstitutionAdmin)</label>
+                            <select asp-for="InstitutionId" class="form-select" asp-items="ViewBag.Institutions">
+                                <option value="">-- None --</option>
+                            </select>
+                            <small class="form-text text-muted">Select institution if user is an InstitutionAdmin</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SupportOrgId" class="form-label fw-bold">Support Organization (for SupportOrgStaff)</label>
+                            <select asp-for="SupportOrgId" class="form-select" asp-items="ViewBag.SupportOrgs">
+                                <option value="">-- None --</option>
+                            </select>
+                            <small class="form-text text-muted">Select organization if user is SupportOrgStaff</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" />
+                                <label asp-for="IsActive" class="form-check-label fw-bold">Active Account</label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                            <a asp-action="Users" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

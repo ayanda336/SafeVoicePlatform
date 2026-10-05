@@ -1,0 +1,168 @@
+﻿@model IEnumerable<SafeVoicePlatform.Models.Referral>
+
+@{
+    ViewData["Title"] = "Referrals";
+    var currentStatus = ViewBag.CurrentStatus as string;
+    var currentType = ViewBag.CurrentType as string;
+    var currentFromDate = ViewBag.CurrentFromDate as string;
+    var currentToDate = ViewBag.CurrentToDate as string;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Referrals</h1>
+        <div>
+            <a asp-action="Dashboard" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+           @*  <a asp-action="OrganizationProfile" class="btn btn-outline-info">
+                <i class="bi bi-building"></i> Organization Profile
+            </a> *@
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Filters</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        @if (ViewBag.Statuses != null)
+                        {
+                            foreach (var status in ViewBag.Statuses)
+                            {
+                                var statusValue = status.Value as string;
+                                var statusText = status.Text as string;
+                                if (currentStatus == statusValue)
+                                {
+                                    <option value="@statusValue" selected>@statusText</option>
+                                }
+                                else
+                                {
+                                    <option value="@statusValue">@statusText</option>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Report Type</label>
+                    <select name="type" class="form-select">
+                        <option value="">All Types</option>
+                        @if (ViewBag.ReportTypes != null)
+                        {
+                            foreach (var type in ViewBag.ReportTypes)
+                            {
+                                var typeValue = type.Value as string;
+                                var typeText = type.Text as string;
+                                if (currentType == typeValue)
+                                {
+                                    <option value="@typeValue" selected>@typeText</option>
+                                }
+                                else
+                                {
+                                    <option value="@typeValue">@typeText</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">From Date</label>
+                    <input type="date" name="fromDate" class="form-control" value="@currentFromDate" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">To Date</label>
+                    <input type="date" name="toDate" class="form-control" value="@currentToDate" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Referrals Table -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Report Type</th>
+                            <th>Report Title</th>
+                            <th>Status</th>
+                            <th>Contact Made</th>
+                            <th>Referred On</th>
+                            <th>Actions</th>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    No referrals found matching the filters.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var referral in Model)
+                            {
+                                <tr>
+                                    <td>#@referral.Id</td>
+                                    <td>@(referral.Report?.ReportType ?? "N/A")</td>
+                                    <td>@(referral.Report?.Title ?? "N/A")</td>
+                                    <td>
+                                        @if (referral.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success">@referral.Status</span>
+                                        }
+                                        else if (referral.Status == "In Progress")
+                                        {
+                                            <span class="badge bg-info">@referral.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">@referral.Status</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (referral.ContactMade)
+                                        {
+                                            <span class="badge bg-success">Yes</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No</span>
+                                        }
+                                    </td>
+                                    <td>@referral.ReferredAt.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        <a asp-action="ReferralDetails" asp-route-id="@referral.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,274 @@
+﻿@{
+    ViewData["Title"] = "Safe Voice";
+}
+
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    Your Voice,<br />
+                    <span class="text-primary">Protected and Heard</span>
+                </h1>
+                <p class="lead text-muted mb-4">
+                    A secure platform for reporting abuse, harassment, and unsafe conditions.
+                    Speak up with confidence, knowing your privacy is our priority.
+                </p>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="d-flex gap-3">
+                        <a asp-controller="Reports" asp-action="Create" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-shield-check"></i> Submit Report
+                        </a>
+                        <a asp-controller="Reports" asp-action="MyReports" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="bi bi-list-ul"></i> My Reports
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex gap-3">
+                        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-person-plus"></i> Get Started
+                        </a>
+                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="bi bi-box-arrow-in-right"></i> Sign In
+                        </a>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <img src="~/large_c036acfb-eb42-4815-8722-d7714bfa117f.png" alt="Safe Voice" class="img-fluid" style="max-height: 400px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Features Section -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">How Safe Voice Works</h2>
+        <p class="text-muted">Simple, secure, and confidential reporting</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4 h-100">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <h4 class="fw-semibold">Secure Reporting</h4>
+                <p class="text-muted">Your identity is protected with end-to-end encryption. Report anonymously or with confidence.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4 h-100">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <h4 class="fw-semibold">Track Progress</h4>
+                <p class="text-muted">Monitor your report status in real-time. Get updates when action is taken.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4 h-100">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-building"></i>
+                </div>
+                <h4 class="fw-semibold">Institutional Oversight</h4>
+                <p class="text-muted">Institutions gain insights to improve safety policies while maintaining confidentiality.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="fw-bold mb-3">Why Choose Safe Voice?</h2>
+                <div class="feature-list">
+                    <div class="d-flex mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-3 mt-1"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Complete Anonymity</h5>
+                            <p class="text-muted mb-0">Report without revealing your identity. Get a reference number to track progress.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-3 mt-1"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Professional Support</h5>
+                            <p class="text-muted mb-0">Connect with counseling services, GBV support, and legal aid organizations.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-3 mt-1"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Data Security</h5>
+                            <p class="text-muted mb-0">Your information is encrypted and protected with industry-standard security.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <i class="bi bi-check-circle-fill text-primary me-3 mt-1"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Actionable Insights</h5>
+                            <p class="text-muted mb-0">Help institutions create safer environments through anonymous data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="stats-card p-4 bg-white rounded-3 shadow-sm">
+                    <div class="row text-center">
+                        <div class="col-6 mb-4">
+                            <div class="display-4 fw-bold text-primary">100%</div>
+                            <div class="text-muted">Confidential</div>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <div class="display-4 fw-bold text-primary">24/7</div>
+                            <div class="text-muted">Support Available</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="display-4 fw-bold text-primary">Secure</div>
+                            <div class="text-muted">Encryption</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="display-4 fw-bold text-primary">Free</div>
+                            <div class="text-muted">For All Users</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="fw-bold mb-4">Ready to Speak Up?</h2>
+            <p class="lead text-muted mb-4">
+                Join thousands of individuals who have found their voice through Safe Voice.
+                Your report can make a difference.
+            </p>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Reports" asp-action="Create" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-pencil-square"></i> Submit Your Report
+                </a>
+            }
+            else
+            {
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-person-plus"></i> Create Free Account
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 4rem 0;
+    }
+
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 16px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid #eef2f6;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+        }
+
+    .feature-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #0066cc10 0%, #0052a310 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .feature-icon i {
+            font-size: 28px;
+            color: #0066cc;
+        }
+
+    .stats-card {
+        border: 1px solid #eef2f6;
+    }
+
+    .btn-primary {
+        background: #0066cc;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+        .btn-primary:hover {
+            background: #0052a3;
+            transform: translateY(-1px);
+        }
+
+    .btn-outline-secondary {
+        border-color: #dee2e6;
+        color: #495057;
+        transition: all 0.2s;
+    }
+
+        .btn-outline-secondary:hover {
+            background: #f8f9fa;
+            border-color: #ced4da;
+            transform: translateY(-1px);
+        }
+
+    .text-primary {
+        color: #0066cc !important;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .rounded-3 {
+        border-radius: 16px !important;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-section
+
+    {
+        padding: 2rem 0;
+        text-align: center;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+    }
+
+    .feature-card {
+        margin-bottom: 1rem;
+    }
+
+    }
+</style>

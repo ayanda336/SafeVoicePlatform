@@ -1,0 +1,106 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using SafeVoicePlatform.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+}
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white fw-bold fs-6" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-6 me-2"></i> @(user?.FullName ?? User.Identity?.Name)
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+                @* <li>
+                    <a class="dropdown-item fw-semibold fs-6" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="bi bi-person fs-5 me-2"></i> Profile
+                    </a>
+                </li>
+
+                @if (roles.Contains("Individual"))
+                {
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="Reports" asp-action="MyReports">
+                            <i class="bi bi-files fs-6 me-2"></i> My Reports
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="Reports" asp-action="Track">
+                            <i class="bi bi-search fs-6 me-2"></i> Track Report
+                        </a>
+                    </li>
+                }
+
+                @if (roles.Contains("InstitutionAdmin"))
+                {
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="Reports" asp-action="Dashboard">
+                            <i class="bi bi-speedometer2 fs-5 me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="Reports" asp-action="InstitutionReports">
+                            <i class="bi bi-file-text fs-5 me-2"></i> All Reports
+                        </a>
+                    </li>
+                }
+
+                @if (roles.Contains("SupportOrgStaff"))
+                {
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="SupportOrg" asp-action="Dashboard">
+                            <i class="bi bi-speedometer2 fs-5 me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="SupportOrg" asp-action="Referrals">
+                            <i class="bi bi-share fs-5 me-2"></i> Referrals
+                        </a>
+                    </li>
+                }
+
+                @if (roles.Contains("ITAdmin"))
+                {
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="Admin" asp-action="Dashboard">
+                            <i class="bi bi-gear fs-5 me-2"></i> Admin Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-semibold fs-6" asp-controller="Survey" asp-action="AllResults">
+                            <i class="bi bi-graph-up fs-5 me-2"></i> Survey Analytics
+                        </a>
+                    </li>
+                } *@
+
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")">
+                        <button type="submit" class="dropdown-item text-danger fw-semibold fs-6">
+                            <i class="bi bi-box-arrow-right fs-5 me-2"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white fw-bold fs-6" asp-area="Identity" asp-page="/Account/Register">
+                <i class="bi bi-person-plus fs-6 me-2"></i> Register
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white fw-bold fs-6" asp-area="Identity" asp-page="/Account/Login">
+                <i class="bi bi-box-arrow-in-right fs-6 me-2"></i> Login
+            </a>
+        </li>
+    }
+</ul>

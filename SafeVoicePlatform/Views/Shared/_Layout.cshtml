@@ -1,0 +1,157 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using SafeVoicePlatform.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Safe Voice</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SafeVoicePlatform.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/chatbot.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-primary py-3">
+            <div class="container">
+                <a class="navbar-brand fw-bold fs-3" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-shield-lock fs-2 me-2"></i> Safe Voice
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold fs-6" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door fs-6 me-2"></i> Home
+                            </a>
+                        </li>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @if (roles.Contains("Individual"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Reports" asp-action="Create">
+                                        <i class="bi bi-pencil-square fs-6 me-2"></i> Submit Report
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Reports" asp-action="MyReports">
+                                        <i class="bi bi-files fs-6 me-2"></i> My Reports
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Reports" asp-action="Track">
+                                        <i class="bi bi-search fs-6 me-2"></i> Track Report
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Survey" asp-action="Index">
+                                        <i class="bi bi-bar-chart-line fs-6 me-2"></i> Wellbeing Surveys
+                                    </a>
+                                </li>
+                            }
+
+                            @if (roles.Contains("InstitutionAdmin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Reports" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2 fs-6 me-2"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Reports" asp-action="InstitutionReports">
+                                        <i class="bi bi-file-text fs-6 me-2"></i> Reports
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Survey" asp-action="AllResults">
+                                        <i class="bi bi-graph-up fs-6 me-2"></i> Survey Analytics
+                                    </a>
+                                </li>
+                            }
+
+                            @if (roles.Contains("SupportOrgStaff"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="SupportOrg" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2 fs-6 me-2"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="SupportOrg" asp-action="Referrals">
+                                        <i class="bi bi-share fs-6 me-2"></i> Referrals
+                                    </a>
+                                </li>
+                            }
+
+                            @if (roles.Contains("ITAdmin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Admin" asp-action="Dashboard">
+                                        <i class="bi bi-gear fs-6 me-2"></i> Admin Panel
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold fs-6" asp-controller="Survey" asp-action="AllResults">
+                                        <i class="bi bi-graph-up fs-6 me-2"></i> Survey Analytics
+                                    </a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold fs-6" asp-controller="Reports" asp-action="Track">
+                                    <i class="bi bi-search fs-6 me-2"></i> Track Report
+                                </a>
+                            </li>
+                        }
+
+                        
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="border-top mt-auto py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">&copy; @DateTime.Now.Year Safe Voice. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <small class="text-muted">
+                        <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted">Privacy Policy</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/chatbot.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

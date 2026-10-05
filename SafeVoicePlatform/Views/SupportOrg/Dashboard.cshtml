@@ -1,0 +1,264 @@
+﻿@model SafeVoicePlatform.Models.SupportOrgDashboardViewModel
+
+@{
+    ViewData["Title"] = "Support Organization Dashboard";
+    var typeLabels = Model.ReferralsByType.Keys.ToList();
+    var typeData = Model.ReferralsByType.Values.ToList();
+    var monthLabels = Model.MonthlyTrend.Keys.ToList();
+    var monthData = Model.MonthlyTrend.Values.ToList();
+    var statusLabels = Model.StatusDistribution.Select(s => s.Status).ToList();
+    var statusData = Model.StatusDistribution.Select(s => s.Count).ToList();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Support Organization Dashboard</h1>
+            @if (Model.Organization != null)
+            {
+                <p class="text-muted">@Model.Organization.Name - @Model.Organization.OrganizationType</p>
+            }
+        </div>
+        <div>
+            <a asp-action="Referrals" class="btn btn-outline-primary me-2">
+                <i class="bi bi-list-ul"></i> View All Referrals
+            </a>
+            @* <a asp-action="OrganizationProfile" class="btn btn-outline-info">
+                <i class="bi bi-building"></i> Organization Profile
+            </a> *@
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Total Referrals</h6>
+                            <h2 class="mb-0">@Model.TotalReferrals</h2>
+                        </div>
+                        <i class="bi bi-share fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Pending</h6>
+                            <h2 class="mb-0">@Model.PendingReferrals</h2>
+                        </div>
+                        <i class="bi bi-clock-history fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">In Progress</h6>
+                            <h2 class="mb-0">@Model.InProgressReferrals</h2>
+                        </div>
+                        <i class="bi bi-arrow-repeat fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Completed</h6>
+                            <h2 class="mb-0">@Model.CompletedReferrals</h2>
+                        </div>
+                        <i class="bi bi-check-circle fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Referrals by Type Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Referrals by Report Type</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="referralsByTypeChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Trend Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Monthly Referral Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyTrendChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Status Distribution -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Status Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Referrals -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Referrals</h5>
+                    <a asp-action="Referrals" class="btn btn-sm btn-link">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Report Type</th>
+                                    <th>Status</th>
+                                    <th>Referred On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var referral in Model.RecentReferrals)
+                                {
+                                    <tr>
+                                        <td>#@referral.Id</td>
+                                        <td>@(referral.Report?.ReportType ?? "N/A")</td>
+                                        <td>
+                                            @if (referral.Status == "Completed")
+                                            {
+                                                <span class="badge bg-success">@referral.Status</span>
+                                            }
+                                            else if (referral.Status == "In Progress")
+                                            {
+                                                <span class="badge bg-info">@referral.Status</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">@referral.Status</span>
+                                            }
+                                        </td>
+                                        <td>@referral.ReferredAt.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            <a asp-action="ReferralDetails" asp-route-id="@referral.Id" class="btn btn-sm btn-outline-primary">
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Referrals by Type Chart
+        var typeCtx = document.getElementById('referralsByTypeChart').getContext('2d');
+        var typeChart = new Chart(typeCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(typeLabels)),
+                datasets: [{
+                    label: 'Number of Referrals',
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(typeData)),
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        // Monthly Trend Chart
+        var trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+        var trendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(monthLabels)),
+                datasets: [{
+                    label: 'Referrals per Month',
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(monthData)),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        // Status Distribution Chart
+        var statusCtx = document.getElementById('statusChart').getContext('2d');
+        var statusChart = new Chart(statusCtx, {
+            type: 'pie',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(statusLabels)),
+                datasets: [{
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(statusData)),
+                    backgroundColor: ['#ffc107', '#0dcaf0', '#198754'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+}

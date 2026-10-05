@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Track Report";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Track Your Report</h3>
+                </div>
+                <div class="card-body">
+                    <p>Enter your reference number to check the status of your anonymous report.</p>
+
+                    <form asp-action="Track" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Reference Number</label>
+                            <input type="text" name="referenceNumber" class="form-control" placeholder="e.g., SAFE-20240323-XXXX" required />
+                            <small class="form-text text-muted">Example: SAFE-20240323-A1B2C3</small>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Track Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

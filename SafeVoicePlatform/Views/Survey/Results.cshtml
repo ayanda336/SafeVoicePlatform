@@ -1,0 +1,78 @@
+﻿@model List<SafeVoicePlatform.Controllers.SurveyResultViewModel>
+
+@{
+    ViewData["Title"] = "Survey Results";
+    var survey = ViewBag.Survey as SafeVoicePlatform.Models.Survey;
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Survey Results: @survey?.Title</h3>
+        </div>
+        <div class="card-body">
+            @foreach (var question in Model)
+            {
+                <div class="mb-5">
+                    <h5>@question.QuestionText</h5>
+                    <p class="text-muted">Total responses: @question.TotalResponses</p>
+
+                    @if (question.QuestionType == "text")
+                    {
+                        <div class="bg-light p-3 rounded">
+                            @foreach (var response in question.Responses)
+                            {
+                                <div class="mb-2 pb-2 border-bottom">
+                                    <i class="bi bi-chat"></i> @response.Answer
+                                </div>
+                            }
+                            @if (!question.Responses.Any())
+                            {
+                                <p class="text-muted">No text responses yet.</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="progress-stack">
+                            @foreach (var response in question.Responses.OrderByDescending(r => r.Count))
+                            {
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>@response.Answer</span>
+                                        <span>@response.Count (@response.Percentage.ToString("F1")%)</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar"
+                                             style="width: @response.Percentage%"
+                                             aria-valuenow="@response.Percentage"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="card-footer">
+            <a asp-action="Index" class="btn btn-secondary">Back to Surveys</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .progress {
+        height: 25px;
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+        transition: width 0.5s ease;
+    }
+</style>
